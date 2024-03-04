@@ -1,5 +1,7 @@
 .vscode
 *.o
-server
 *.log
 vgcore.*
+client
+client_src
+myftp

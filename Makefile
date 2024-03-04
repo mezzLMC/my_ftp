@@ -7,17 +7,19 @@
 
 SRC = $(wildcard src/*.c)
 
+NAME = myftp
+
 OBJ = $(SRC:.c=.o)
 
 CFLAGS += -Wall -Wextra -I ./include
 
 
 all: $(OBJ)
-	gcc -o server $(OBJ)
+	gcc -o $(NAME) $(OBJ)
 
 run:
 	make all
-	./server 4242
+	$(NAME) 4242
 
 .PHONY: all clean fclean re server run
 
@@ -25,6 +27,6 @@ clean:
 	rm -f $(OBJ)
 
 fclean: clean
-	rm -f server
+	rm -f $(NAME)
 
 re: fclean all
