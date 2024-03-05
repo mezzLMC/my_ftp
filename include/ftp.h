@@ -32,14 +32,14 @@ typedef struct client_s {
     int sd;
     char current_path[1024];
     int total_bytes;
-    char* username;
+    char *username;
     enum client_state state;
 } client_t;
 
 typedef void (*command_func_t)(client_t *client, char **command);
 
 void client_read(client_t *client);
-void client_send(client_t* client, char* message);
+void client_send(client_t *client, char *message);
 command_func_t client_find(char **buffer_tab);
 
 //////////////////////// utils ////////////////////////
@@ -47,13 +47,14 @@ command_func_t client_find(char **buffer_tab);
 typedef struct addrinfo {
     struct sockaddr_in addr;
     socklen_t len;
-    struct sockaddr* ptr;
-} addrinfo_t; // just to make the code more readable and avoir casting everywhere
+    struct sockaddr *ptr;
+} addrinfo_t;
+// just to make the code more readable and avoir casting everywhere
 
 
 addrinfo_t *create_sock_addr(void);
 void bind_sock_addr(int server_fd, int port);
-char** buffer_split(char* buffer);
+char **buffer_split(char *buffer);
 
 
     #define SHOW_IP(ADDR) inet_ntoa(ADDR->addr.sin_addr)
@@ -63,14 +64,14 @@ char** buffer_split(char* buffer);
 
 //////////////////////// server ////////////////////////
 
-void server_run(int server_fd, char* root);
+void server_run(int server_fd, char *root);
 int server_create(int port);
 void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr);
-char* server_get_root(char* path);
+char *server_get_root(char *path);
 
 //////////////////////// clients list ////////////////////////
 
-typedef client_t* client_list_t;
+typedef client_t *client_list_t;
 
 client_list_t clients_list_get(void);
 int clients_list_fill_fd_set(int server_fd, fd_set *readfds);

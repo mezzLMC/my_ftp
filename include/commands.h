@@ -5,13 +5,13 @@
 ** commands
 */
 
-#ifndef command_H_
-#define command_H_
+#ifndef COMMAND_H_
+    #define COMMAND_H_
 
-#include <stddef.h>
-#include "ftp.h"
+    #include <stddef.h>
+    #include "ftp.h"
 
-static char* commands_list[] = {
+static char *commands_list[] = {
     "USER",
     "PASS",
     "QUIT",
