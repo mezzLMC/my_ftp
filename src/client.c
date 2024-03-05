@@ -8,7 +8,7 @@
 #include "ftp.h"
 #include "commands.h"
 
-command_func_t client_find(char **buffer_tab)
+handler_t client_find(char **buffer_tab)
 {
     int i = 0;
     char *command = buffer_tab[0];
@@ -32,7 +32,7 @@ void client_read(client_t *client)
 {
     char *buffer = client->buffer;
     char **command = buffer_split(buffer);
-    command_func_t command_func = NULL;
+    handler_t command_func = NULL;
 
     chdir(client->current_path);
     if (command[0] == NULL)

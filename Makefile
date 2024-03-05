@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-SRC = $(wildcard src/*.c)
+SRC = $(wildcard src/*.c src/**/*.c)
 
 NAME = myftp
 
