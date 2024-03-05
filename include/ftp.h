@@ -18,6 +18,7 @@
     #include <stdlib.h>
     #include <sys/select.h>
     #include <string.h>
+    #include <stdbool.h>
 
 //////////////////////// client ////////////////////////
 
@@ -51,7 +52,7 @@ typedef struct addrinfo {
 
 
 addrinfo_t *create_sock_addr(void);
-void bind_sock_addr(int server_fd);
+void bind_sock_addr(int server_fd, int port);
 char** buffer_split(char* buffer);
 
 
@@ -63,7 +64,7 @@ char** buffer_split(char* buffer);
 //////////////////////// server ////////////////////////
 
 void server_run(int server_fd);
-int server_create(void);
+int server_create(int port);
 void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr);
 
 //////////////////////// clients list ////////////////////////

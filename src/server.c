@@ -7,14 +7,14 @@
 
 #include "ftp.h"
 
-int server_create(void)
+int server_create(int port)
 {
     int opt = 1;
     int flags;
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    bind_sock_addr(server_fd);
+    bind_sock_addr(server_fd, port);
     flags = fcntl(server_fd, F_GETFL, 0);
     if (flags == -1) {
         perror("fcntl");

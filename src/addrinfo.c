@@ -26,13 +26,13 @@ addrinfo_t *create_sock_addr(void)
     return addr;
 }
 
-void bind_sock_addr(int server_fd)
+void bind_sock_addr(int server_fd, int port)
 {
     addrinfo_t *addr = create_sock_addr();
 
     addr->addr.sin_family = AF_INET;
     addr->addr.sin_addr.s_addr = INADDR_ANY;
-    addr->addr.sin_port = htons(4242);
+    addr->addr.sin_port = htons(port);
     bind(server_fd, addr->ptr, addr->len);
     free(addr);
 }
