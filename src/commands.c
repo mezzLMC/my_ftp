@@ -42,5 +42,22 @@ void command_cwd(client_t *client, char **command)
         return client_send(client, "501 No directory name specified.");
     if (chdir(command[1]) == -1)
         return client_send(client, "550 Failed to change directory.");
-    client_send(client, "250 Directory successfully changed.");
+    getcwd(client->current_path, 1024);
+    client_send(client, "250 Requested file action okay, completed.");
+}
+
+void command_pwd(client_t *client, __attribute__((unused)) char **command)
+{
+    char path[1024] = {0};
+    char buffer[2048] = {0};
+    char *root = server_get_root(NULL);
+
+    if (client->state == NOT_LOGGED)
+        return client_send(client, "530 Please login with USER and PASS.");
+    getcwd(path, 1024);
+    if (strcmp(path, root) == 0)
+        sprintf(buffer, "257 \"/\" created.");
+    else
+        sprintf(buffer, "257 \"%s\" created.", path + strlen(root));
+    client_send(client, buffer);
 }

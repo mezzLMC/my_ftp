@@ -30,10 +30,13 @@ int server_create(int port)
 
 char *server_get_root(char *path)
 {
+    char buffer[1024] = {0};
     static char *_path = NULL;
 
-    if (path != NULL)
-        _path = path;
+    if (path != NULL) {
+        getcwd(buffer, 1024);
+        _path = strdup(buffer);
+    }
     return _path;
 }
 
