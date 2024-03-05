@@ -19,19 +19,27 @@
     #include <sys/select.h>
     #include <string.h>
 
-
-
 //////////////////////// client ////////////////////////
+
+enum client_state {
+    NOT_LOGGED = 0,
+    LOGGED
+};
 
 typedef struct client_s {
     char buffer[1024];
     int sd;
     char* current_path[1024];
     int total_bytes;
+    char* username;
+    enum client_state state;
 } client_t;
 
-void client_read(client_t *client);
+typedef void (*command_func_t)(client_t *client, char **command);
 
+void client_read(client_t *client);
+void client_send(client_t* client, char* message);
+command_func_t client_find(char **buffer_tab);
 
 //////////////////////// utils ////////////////////////
 
@@ -44,6 +52,8 @@ typedef struct addrinfo {
 
 addrinfo_t *create_sock_addr(void);
 void bind_sock_addr(int server_fd);
+char** buffer_split(char* buffer);
+
 
     #define SHOW_IP(ADDR) inet_ntoa(ADDR->addr.sin_addr)
     #define SHOW_PORT(ADDR) ntohs(ADDR->addr.sin_port)

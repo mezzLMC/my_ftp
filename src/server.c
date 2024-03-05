@@ -10,10 +10,12 @@
 int server_create(void)
 {
     int opt = 1;
+    int flags;
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     bind_sock_addr(server_fd);
-    int flags = fcntl(server_fd, F_GETFL, 0);
+    flags = fcntl(server_fd, F_GETFL, 0);
     if (flags == -1) {
         perror("fcntl");
         exit(EXIT_FAILURE);
@@ -50,6 +52,7 @@ void server_run(int server_fd)
 {
     fd_set readfds;
     addrinfo_t *addr = create_sock_addr();
+
     listen(server_fd, MAX_CLIENTS);
     while (1) {
         server_accept(server_fd, &readfds, addr);

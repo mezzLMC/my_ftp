@@ -50,9 +50,24 @@ void clients_list_add(int new_socket)
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (client_list[i].sd == 0) {
             client_list[i].sd = new_socket;
-            printf("Adding to list of sockets as %d\n", i);
+            client_send(&client_list[i], "220 Service ready for new user.");
             break;
         }
+    }
+}
+
+void client_execute(client_t *client, char c)
+{
+    char *buffer = client->buffer;
+
+    buffer[client->total_bytes] = c;
+    client->total_bytes++;
+    buffer[client->total_bytes] = '\0';
+    if (strstr(buffer, "\r\n") != NULL) {
+        buffer[strlen(buffer) - 2] = '\0';
+        client_read(client);
+        client->total_bytes = 0;
+        client->buffer[0] = '\0';
     }
 }
 
@@ -68,7 +83,6 @@ void clients_list_read(fd_set *readfds)
         if (!(FD_ISSET(client->sd, readfds)))
             continue;
         valread = read(client->sd, &c, 1);
-
         if (valread == -1)
             continue;
         if (valread == 0) {
@@ -76,15 +90,6 @@ void clients_list_read(fd_set *readfds)
             client_list[i] = (client_t) {0};
             continue;
         }
-        if (c == '\n' || c == '\r') {
-            client->buffer[client->total_bytes] = '\0';
-            client->total_bytes = 0;
-            dprintf(1, "\ncommand was %s\n", client->buffer);
-            write(client->sd, "200 Command okay.\n", 18);
-        } else {
-            client->buffer[client->total_bytes] = c;
-            client->total_bytes++;
-        }
-        write(1, &c, 1);
+        client_execute(client, c);
     }
 }
