@@ -30,7 +30,7 @@ enum client_state {
 typedef struct client_s {
     char buffer[1024];
     int sd;
-    char* current_path[1024];
+    char current_path[1024];
     int total_bytes;
     char* username;
     enum client_state state;
@@ -63,9 +63,10 @@ char** buffer_split(char* buffer);
 
 //////////////////////// server ////////////////////////
 
-void server_run(int server_fd);
+void server_run(int server_fd, char* root);
 int server_create(int port);
 void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr);
+char* server_get_root(char* path);
 
 //////////////////////// clients list ////////////////////////
 

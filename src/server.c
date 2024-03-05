@@ -28,6 +28,15 @@ int server_create(int port)
     return server_fd;
 }
 
+char *server_get_root(char *path)
+{
+    static char *_path = NULL;
+
+    if (path != NULL)
+        _path = path;
+    return _path;
+}
+
 void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr)
 {
     struct timeval tv = {0, 0};
@@ -48,11 +57,12 @@ void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr)
     }
 }
 
-void server_run(int server_fd)
+void server_run(int server_fd, char *root)
 {
     fd_set readfds;
     addrinfo_t *addr = create_sock_addr();
 
+    server_get_root(root);
     listen(server_fd, MAX_CLIENTS);
     while (1) {
         server_accept(server_fd, &readfds, addr);

@@ -27,6 +27,6 @@ int main(int ac, char **av)
     }
     port = atoi(av[1]);
     server_fd = server_create(port);
-    server_run(server_fd);
+    server_run(server_fd, av[2]);
     return 0;
 }

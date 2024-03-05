@@ -34,6 +34,7 @@ void client_read(client_t *client)
     char **command = buffer_split(buffer);
     command_func_t command_func = NULL;
 
+    chdir(client->current_path);
     if (command[0] == NULL)
         return;
     command_func = client_find(command);

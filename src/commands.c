@@ -35,3 +35,12 @@ void command_quit(client_t *client, __attribute__((unused)) char **command)
     close(client->sd);
     memset(client, 0, sizeof(client_t));
 }
+
+void command_cwd(client_t *client, char **command)
+{
+    if (command[1] == NULL || strcmp(command[1], "") == 0)
+        return client_send(client, "501 No directory name specified.");
+    if (chdir(command[1]) == -1)
+        return client_send(client, "550 Failed to change directory.");
+    client_send(client, "250 Directory successfully changed.");
+}

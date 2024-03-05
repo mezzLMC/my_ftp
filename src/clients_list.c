@@ -45,11 +45,13 @@ void clients_list_add(int new_socket)
 {
     client_list_t client_list = clients_list_get();
     int flags = fcntl(new_socket, F_GETFL, 0);
+    char *root = server_get_root(NULL);
 
     fcntl(new_socket, F_SETFL, flags | O_NONBLOCK);
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (client_list[i].sd == 0) {
             client_list[i].sd = new_socket;
+            strcpy(client_list[i].current_path, root);
             client_send(&client_list[i], "220 Service ready for new user.");
             break;
         }
