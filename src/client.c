@@ -31,14 +31,15 @@ void client_send(client_t *client, errormsg message)
 void client_read(client_t *client)
 {
     char *buffer = client->buffer;
-    char **command = buffer_split(buffer);
+    char *buffer_copy = strdup(buffer);
+    char **command = buffer_split(buffer_copy);
     handler_t handler = NULL;
 
-    chdir(client->current_path);
     if (command[0] == NULL)
-        return;
+        return client_send(client, _500);
     handler = client_find(command);
     if (handler == NULL)
-        return client_send(client, "500 Unknown command.");
+        return client_send(client, _500);
+    chdir(client->current_path);
     command_login_wrap(handler, client, command);
 }
