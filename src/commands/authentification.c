@@ -10,7 +10,7 @@
 void command_username(client_t *client, char **command)
 {
     if (client->state == LOGGED)
-        return client_send(client, "501 Disconnect first to re-login.");
+        return client_send(client, _230);
     if (command[1] == NULL || strcmp(command[1], "") == 0)
         return client_send(client, "501 User name not specified.");
     client->username = strdup(command[1]);
@@ -20,12 +20,12 @@ void command_username(client_t *client, char **command)
 void command_password(client_t *client, char **command)
 {
     if (client->username == NULL)
-        return client_send(client, "503 Login with USER first.");
+        return client_send(client, _332);
     if (strcmp(client->username, "Anonymous") != 0)
-        return client_send(client, "Authentication rejected");
+        return client_send(client, _530);
     if (command[1] == NULL || strcmp(command[1], "") == 0) {
         client->state = LOGGED;
-        return client_send(client, "230 User logged in, proceed.");
+        return client_send(client, _230);
     }
 }
 

@@ -18,11 +18,11 @@ __attribute__((unused)) static char *commands_list[] = {
     "PWD",
     "CWD",
     "CDUP",
+    "NOOP",
+    "HELP",
     "DELE",
     "PASV",
     "PORT",
-    "HELP",
-    "NOOP",
     "RETR",
     "STOR",
     "LIST",
@@ -51,16 +51,18 @@ __attribute__((unused)) static handler_t command_funcs[] = {
     command_pwd,
     command_cwd,
     command_cdup,
+    command_noop,
+    command_help,
     // command_dele,
     // command_pasv,
     // command_port,
-    // command_help,
-    // command_noop,
     // command_retr,
     // command_stor,
     // command_list,
     NULL
 };
+
+void command_login_wrap(handler_t handlr, client_t *client, char **command);
 
 
 #endif /* !command_H_ */

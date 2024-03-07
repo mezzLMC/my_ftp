@@ -22,3 +22,13 @@ void command_login_wrap(handler_t handlr, client_t *client, char **command)
     else
         return handlr(client, command);
 }
+
+void command_noop(client_t *client, __attribute__((unused)) char **command)
+{
+    client_send(client, _200);
+}
+
+void command_help(client_t *client, __attribute__((unused)) char **command)
+{
+    client_send(client, _214);
+}

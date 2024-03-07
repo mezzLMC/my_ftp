@@ -20,7 +20,7 @@ handler_t client_find(char **buffer_tab)
     return NULL;
 }
 
-void client_send(client_t *client, char *message)
+void client_send(client_t *client, errormsg message)
 {
     char buffer[1024] = {0};
 
@@ -32,13 +32,13 @@ void client_read(client_t *client)
 {
     char *buffer = client->buffer;
     char **command = buffer_split(buffer);
-    handler_t command_func = NULL;
+    handler_t handler = NULL;
 
     chdir(client->current_path);
     if (command[0] == NULL)
         return;
-    command_func = client_find(command);
-    if (command_func == NULL)
+    handler = client_find(command);
+    if (handler == NULL)
         return client_send(client, "500 Unknown command.");
-    command_func(client, command);
+    command_login_wrap(handler, client, command);
 }
