@@ -60,7 +60,7 @@ void client_read(client_t *client);
 void client_send(client_t *client, errormsg msg);
 handler_t client_find(char **buffer_tab);
 void client_watch_subconnection(client_t *client);
-void client_close_sub_connection(client_t *client);
+void client_close_sub_connection(client_t *client, errormsg message);
 void sub_connection_execute(client_t *client,
     char **command, handler_t data_handler);
 

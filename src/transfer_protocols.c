@@ -17,18 +17,20 @@ static void sub_connection_fill_buffer(int fd, sub_connection_t *sub_co)
     sub_co->buffer[n - 1] = '\0';
 }
 
-void client_close_sub_connection(client_t *client)
+void client_close_sub_connection(client_t *client, errormsg message)
 {
     sub_connection_t *sub_co = client->sub_connection;
 
     if (!client->sub_connection)
         return;
     client->transfer_type = NONE;
-    close(sub_co->new_socket);
     close(sub_co->data_fd);
+    if (sub_co->new_socket > 0)
+        close(sub_co->new_socket);
     client->sub_connection = NULL;
     free(sub_co);
-    client_send(client, _226);
+    if (message)
+        client_send(client, message);
 }
 
 void sub_connections_flush_buffer(client_t *client)
@@ -37,7 +39,7 @@ void sub_connections_flush_buffer(client_t *client)
 
     if (sub_co && sub_co->new_socket > 0 && sub_co->buffer[0] != '\0') {
         dprintf(sub_co->new_socket, "%s\r\n", sub_co->buffer);
-        client_close_sub_connection(client);
+        client_close_sub_connection(client, _226);
     }
 }
 
@@ -47,6 +49,7 @@ static void child_transfer_data(int fd[2], handler_t handler,
     dup2(fd[1], 1);
     close(fd[0]);
     handler(client, command);
+    exit(0);
 }
 
 static void parent_receive_transfer(int fd[2], pid_t pid, client_t *client)
@@ -59,6 +62,7 @@ static void parent_receive_transfer(int fd[2], pid_t pid, client_t *client)
     sub_connection_fill_buffer(fd[0], sub_co);
     close(fd[0]);
     sub_connections_flush_buffer(client);
+    client_close_sub_connection(client, NULL);
 }
 
 void sub_connection_execute(client_t *client, char **command,
@@ -78,6 +82,5 @@ void sub_connection_execute(client_t *client, char **command,
             child_transfer_data(fd, data_handler, client, command);
         else
             parent_receive_transfer(fd, pid, client);
-    } else
-        dprintf(client->sd, "425 Use PASV or PORT first.\r\n");
+    }
 }

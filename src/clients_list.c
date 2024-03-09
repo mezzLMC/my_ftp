@@ -89,7 +89,7 @@ void clients_list_read(fd_set *readfds)
             continue;
         if (valread == 0) {
             close(client->sd);
-            client_close_sub_connection(client);
+            client_close_sub_connection(client, NULL);
             memset(client, 0, sizeof(client_t));
             continue;
         }

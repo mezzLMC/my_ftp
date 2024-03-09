@@ -33,6 +33,6 @@ void command_quit(client_t *client, __attribute__((unused)) char **command)
 {
     client_send(client, "221 Service closing control connection.");
     close(client->sd);
-    client_close_sub_connection(client);
+    client_close_sub_connection(client, NULL);
     memset(client, 0, sizeof(client_t));
 }

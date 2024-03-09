@@ -40,6 +40,8 @@ typedef const char *errormsg;
 
     #define _332    "332 Need account for login."
 
+    #define _425    "425 Use PORT or PASV first."
+
     #define _500    "500 Unknown command."
 
     #define _530    "530 Login with USER and PASS first."
