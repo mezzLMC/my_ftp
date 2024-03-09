@@ -10,7 +10,7 @@
 
     #define _257(path)  "257 " path " is the current directory."
 
-typedef __attribute__((unused)) const char *errormsg;
+typedef const char *errormsg;
 
     #define _250    "250 Requested file action okay, completed."
 

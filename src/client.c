@@ -43,3 +43,18 @@ void client_read(client_t *client)
     chdir(client->current_path);
     command_login_wrap(handler, client, command);
 }
+
+void client_watch_subconnection(client_t *client)
+{
+    sub_connection_t *sub_co = client->sub_connection;
+    addrinfo_t *addr = create_sock_addr();
+    int new_socket = 0;
+
+    if (sub_co) {
+        new_socket = accept(sub_co->data_fd, addr->ptr, &(addr->len));
+        if (new_socket < 0) {
+            return;
+        }
+        sub_co->new_socket = new_socket;
+    }
+}

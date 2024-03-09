@@ -89,7 +89,7 @@ void clients_list_read(fd_set *readfds)
             continue;
         if (valread == 0) {
             close(client->sd);
-            client_list[i] = (client_t) {0};
+            memset(client, 0, sizeof(client_t));
             continue;
         }
         client_execute(client, c);

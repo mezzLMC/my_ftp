@@ -16,6 +16,15 @@ bool validate_port(char *port)
     return true;
 }
 
+int server_get_port(int port)
+{
+    static int _port = 0;
+
+    if (port != 0)
+        _port = port;
+    return _port;
+}
+
 int main(int ac, char **av)
 {
     int server_fd;
@@ -27,6 +36,7 @@ int main(int ac, char **av)
     }
     port = atoi(av[1]);
     server_fd = server_create(port);
+    server_get_port(port);
     server_run(server_fd, av[2]);
     return 0;
 }

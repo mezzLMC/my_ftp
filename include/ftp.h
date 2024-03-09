@@ -28,6 +28,18 @@ enum client_state {
     LOGGED
 };
 
+enum data_transfer_type {
+    NONE = 0,
+    ACTIVE,
+    PASSIVE
+};
+
+typedef struct subconnection {
+    int data_fd;
+    int port;
+    int new_socket;
+} sub_connection_t;
+
 typedef struct client_s {
     char buffer[1024];
     int sd;
@@ -35,13 +47,18 @@ typedef struct client_s {
     int total_bytes;
     char *username;
     enum client_state state;
+    enum data_transfer_type transfer_type;
+    sub_connection_t *sub_connection;
+    int data_fd;
 } client_t;
+
 
 typedef void (*handler_t)(client_t *client, char **command);
 
 void client_read(client_t *client);
 void client_send(client_t *client, errormsg msg);
 handler_t client_find(char **buffer_tab);
+void client_watch_subconnection(client_t *client);
 
 //////////////////////// utils ////////////////////////
 
@@ -69,6 +86,7 @@ void server_run(int server_fd, char *root);
 int server_create(int port);
 void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr);
 char *server_get_root(char *path);
+int server_get_port(int port);
 
 //////////////////////// clients list ////////////////////////
 

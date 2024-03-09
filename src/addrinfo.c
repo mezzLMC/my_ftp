@@ -29,10 +29,15 @@ addrinfo_t *create_sock_addr(void)
 void bind_sock_addr(int server_fd, int port)
 {
     addrinfo_t *addr = create_sock_addr();
+    int bind_ret;
 
     addr->addr.sin_family = AF_INET;
     addr->addr.sin_addr.s_addr = INADDR_ANY;
     addr->addr.sin_port = htons(port);
-    bind(server_fd, addr->ptr, addr->len);
+    bind_ret = bind(server_fd, addr->ptr, addr->len);
+    if (bind_ret < 0) {
+        perror("bind");
+        exit(EXIT_FAILURE);
+    }
     free(addr);
 }

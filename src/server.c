@@ -13,13 +13,13 @@ int server_create(int port)
     int flags;
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
+    if (server_fd == 0) {
+        perror("socket");
+        exit(EXIT_FAILURE);
+    }
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     bind_sock_addr(server_fd, port);
     flags = fcntl(server_fd, F_GETFL, 0);
-    if (flags == -1) {
-        perror("fcntl");
-        exit(EXIT_FAILURE);
-    }
     flags |= O_NONBLOCK;
     if (fcntl(server_fd, F_SETFL, flags) == -1) {
         perror("fcntl");
@@ -45,12 +45,15 @@ void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr)
     struct timeval tv = {0, 0};
     int new_socket;
     int activy = 0;
+    sub_connection_t *sub_co;
+    client_list_t clients = clients_list_get();
 
+    for (int i = 0; i < MAX_CLIENTS; i++)
+        client_watch_subconnection(&clients[i]);
     if (FD_ISSET(server_fd, readfds)) {
         new_socket = accept(server_fd, addr->ptr, &(addr->len));
-        if (new_socket < 0) {
+        if (new_socket < 0)
             return;
-        }
         activy = select(new_socket + 1, readfds, NULL, NULL, &tv);
         if (activy < 0) {
             perror("select");
@@ -67,6 +70,8 @@ void server_run(int server_fd, char *root)
 
     server_get_root(root);
     listen(server_fd, MAX_CLIENTS);
+    FD_ZERO(&readfds);
+    FD_SET(server_fd, &readfds);
     while (1) {
         server_accept(server_fd, &readfds, addr);
         clients_list_fill_fd_set(server_fd, &readfds);
