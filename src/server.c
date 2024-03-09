@@ -73,7 +73,6 @@ void server_run(int server_fd, char *root)
     FD_SET(server_fd, &readfds);
     while (1) {
         server_accept(server_fd, &readfds, addr);
-        sub_connections_flush_buffer();
         clients_list_fill_fd_set(server_fd, &readfds);
         clients_list_read(&readfds);
     }

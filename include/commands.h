@@ -22,9 +22,9 @@ __attribute__((unused)) static char *commands_list[] = {
     "HELP",
     "PASV",
     "LIST",
+    "RETR",
     "DELE",
     "PORT",
-    "RETR",
     "STOR",
     NULL
 };
@@ -55,9 +55,9 @@ __attribute__((unused)) static handler_t command_funcs[] = {
     command_help,
     command_pasv,
     command_list,
+    command_retr,
     // command_dele,
     // command_port,
-    // command_retr,
     // command_stor,
     NULL
 };
