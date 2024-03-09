@@ -6,6 +6,7 @@
 */
 
 #include "ftp.h"
+#include "commands.h"
 #include <errno.h>
 #include <stdio.h>
 
@@ -30,6 +31,8 @@ void command_cwd(client_t *client, char **command)
 
     if (command[1] == NULL || strcmp(command[1], "") == 0)
         return client_send(client, "501 No directory name specified.");
+    if (strncmp(command[1], "..", 2) == 0)
+        return command_pwd(client, command);
     path = get_absolute_path(command[1]);
     if (chdir(path) == -1)
         return client_send(client, _550);
