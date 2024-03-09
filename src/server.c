@@ -45,7 +45,6 @@ void server_accept(int server_fd, fd_set *readfds, addrinfo_t *addr)
     struct timeval tv = {0, 0};
     int new_socket;
     int activy = 0;
-    sub_connection_t *sub_co;
     client_list_t clients = clients_list_get();
 
     for (int i = 0; i < MAX_CLIENTS; i++)
@@ -74,6 +73,7 @@ void server_run(int server_fd, char *root)
     FD_SET(server_fd, &readfds);
     while (1) {
         server_accept(server_fd, &readfds, addr);
+        sub_connections_flush_buffer();
         clients_list_fill_fd_set(server_fd, &readfds);
         clients_list_read(&readfds);
     }

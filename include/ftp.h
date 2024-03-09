@@ -38,6 +38,7 @@ typedef struct subconnection {
     int data_fd;
     int port;
     int new_socket;
+    char buffer[4096];
 } sub_connection_t;
 
 typedef struct client_s {
@@ -59,6 +60,7 @@ void client_read(client_t *client);
 void client_send(client_t *client, errormsg msg);
 handler_t client_find(char **buffer_tab);
 void client_watch_subconnection(client_t *client);
+void sub_connections_flush_buffer(void);
 
 //////////////////////// utils ////////////////////////
 

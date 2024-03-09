@@ -53,6 +53,10 @@ void command_pwd(client_t *client, __attribute__((unused)) char **command)
 
 void command_cdup(client_t *client, __attribute__((unused)) char **command)
 {
+    char *root = server_get_root(NULL);
+
+    if (strcmp(client->current_path, root) == 0)
+        return client_send(client, _200);
     if (chdir("..") == -1)
         return client_send(client, _550);
     getcwd(client->current_path, 1024);

@@ -57,4 +57,5 @@ void client_watch_subconnection(client_t *client)
         }
         sub_co->new_socket = new_socket;
     }
+    free(addr);
 }

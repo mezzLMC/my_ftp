@@ -28,11 +28,13 @@ typedef const char *errormsg;
 
     #define _221    "221 Service closing control connection. Logged out."
 
-    #define _226    "226 Closing data connection.\nRequested file successful"
+    #define _226    "226 Closing data connection. Requested file successful"
 
     #define _227    "227 Entering Passive Mode (h1,h2,h3,h4,p1,p2)."
 
     #define _230    "230 User logged in, proceed."
+
+    #define _256    "256 Directory send OK."
 
     #define _331    "331 User name okay, need password."
 
