@@ -44,6 +44,19 @@ static void execute_dele(client_t *client, char **command)
         client_send(client, "550 Failed to delete file.");
 }
 
+static char *get_right_path(char *path)
+{
+    char *root = server_get_root(NULL);
+    char buffer[1024] = {0};
+
+    if (path[0] == '/') {
+        strcat(buffer, root);
+        strcat(buffer, path);
+        return strdup(buffer);
+    }
+    return path;
+}
+
 void command_list(client_t *client, __attribute__((unused)) char **command)
 {
     sub_connection_execute(client, command, execute_list);
@@ -55,6 +68,7 @@ void command_retr(client_t *client, char **command)
         client_close_sub_connection(client, NULL);
         return client_send(client, "501 No file name specified.");
     }
+    command[1] = get_right_path(command[1]);
     if (access(command[1], F_OK) == -1) {
         client_close_sub_connection(client, NULL);
         return client_send(client, "550 File not found or access denied.");
@@ -80,10 +94,10 @@ void command_dele(client_t *client, char **command)
         client_close_sub_connection(client, NULL);
         return client_send(client, "501 No file name specified.");
     }
-    if (command[1][0] == '/') {
-        strcat(buffer, root);
-        strcat(buffer, command[1]);
-        command[1] = strdup(buffer);
+    command[1] = get_right_path(command[1]);
+    if (access(command[1], F_OK) == -1) {
+        client_close_sub_connection(client, NULL);
+        return client_send(client, "550 File not found or access denied.");
     }
     sub_connection_execute(client, command, execute_dele);
 }
