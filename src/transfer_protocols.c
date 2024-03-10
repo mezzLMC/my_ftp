@@ -72,6 +72,7 @@ static void parent_receive_transfer(int fd[2], pid_t pid, client_t *client)
 
 static void data_transfer_ensure_connection(client_t *client)
 {
+    int connected = 0;
     sub_connection_t *sub_co = client->sub_connection;
 
     if (client->transfer_type == PASSIVE) {
@@ -81,8 +82,10 @@ static void data_transfer_ensure_connection(client_t *client)
     }
     if (client->transfer_type == ACTIVE) {
         client_send(client, _150);
-        connect(sub_co->new_socket,
+        connected = connect(sub_co->new_socket,
         (struct sockaddr *)&sub_co->addr_data, sizeof(sub_co->addr_data));
+        if (connected < 0)
+            client_send(client, _425);
     }
 }
 
@@ -91,8 +94,6 @@ static void handle_sub_process(handler_t data_handler, client_t *client,
 {
     int fd[2];
     pid_t pid;
-    int connected = 0;
-    sub_connection_t *sub_co = client->sub_connection;
 
     data_transfer_ensure_connection(client);
     pipe(fd);
@@ -107,7 +108,6 @@ void sub_connection_execute(client_t *client, char **command,
     handler_t data_handler)
 {
     int pid = 0;
-    int connected = 0;
     sub_connection_t *sub_co = client->sub_connection;
 
     client->transfer_status = TRANSFERED;
