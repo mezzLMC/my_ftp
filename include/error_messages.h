@@ -8,7 +8,7 @@
 #ifndef ERROR_MESSAGES_H_
     #define ERROR_MESSAGES_H_
 
-    #define _257(path)  "257 " path " is the current directory."
+    #define _257(path)  "257 \"" path "\" is the current directory."
 
 typedef const char *errormsg;
 

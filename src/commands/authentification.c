@@ -12,7 +12,7 @@ void command_username(client_t *client, char **command)
     if (client->state == LOGGED)
         return client_send(client, _230);
     if (command[1] == NULL || strcmp(command[1], "") == 0)
-        return client_send(client, "501 User name not specified.");
+        return client_send(client, "332 User name not specified.");
     client->username = strdup(command[1]);
     client_send(client, "331 User name okay, need password.");
 }
