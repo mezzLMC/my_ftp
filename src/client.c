@@ -47,15 +47,12 @@ void client_read(client_t *client)
 void client_watch_subconnection(client_t *client)
 {
     sub_connection_t *sub_co = client->sub_connection;
-    addrinfo_t *addr = create_sock_addr();
     int new_socket = 0;
 
     if (sub_co) {
-        new_socket = accept(sub_co->data_fd, addr->ptr, &(addr->len));
-        if (new_socket < 0) {
+        new_socket = accept(sub_co->data_fd, NULL, NULL);
+        if (new_socket < 0)
             return;
-        }
         sub_co->new_socket = new_socket;
     }
-    free(addr);
 }

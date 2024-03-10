@@ -44,6 +44,8 @@ typedef const char *errormsg;
 
     #define _500    "500 Unknown command."
 
+    #define _501    "501 Syntax error in parameters or arguments."
+
     #define _530    "530 Login with USER and PASS first."
 
     #define _550    "550 Failed to change directory."

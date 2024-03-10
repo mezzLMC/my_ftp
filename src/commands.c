@@ -23,7 +23,7 @@ static int need_login(handler_t handlr)
 static int need_sub_connection(handler_t handlr)
 {
     handler_t whitelist[] = {
-        command_list, command_retr, command_stor, command_dele, NULL
+        command_list, command_retr, command_stor, NULL
     };
 
     for (int i = 0; whitelist[i] != NULL; i++)

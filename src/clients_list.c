@@ -44,8 +44,8 @@ int clients_list_fill_fd_set(int server_fd, fd_set *readfds)
 void clients_list_add(int new_socket)
 {
     client_list_t client_list = clients_list_get();
-    int flags = fcntl(new_socket, F_GETFL, 0);
     char *root = server_get_root(NULL);
+    int flags = fcntl(new_socket, F_GETFL, 0);
 
     fcntl(new_socket, F_SETFL, flags | O_NONBLOCK);
     for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -73,6 +73,13 @@ void client_execute(client_t *client, char c)
     }
 }
 
+static void client_delete(client_t *client)
+{
+    close(client->sd);
+    client_close_sub_connection(client, NULL);
+    memset(client, 0, sizeof(client_t));
+}
+
 void clients_list_read(fd_set *readfds)
 {
     client_list_t client_list = clients_list_get();
@@ -82,15 +89,15 @@ void clients_list_read(fd_set *readfds)
 
     for (int i = 0; i < MAX_CLIENTS; i++) {
         client = &client_list[i];
+        if (client->transfer_status == TRANSFERED && client->sub_connection)
+            client_close_sub_connection(client, NULL);
         if (!(FD_ISSET(client->sd, readfds)))
             continue;
         valread = read(client->sd, &c, 1);
         if (valread == -1)
             continue;
         if (valread == 0) {
-            close(client->sd);
-            client_close_sub_connection(client, NULL);
-            memset(client, 0, sizeof(client_t));
+            client_delete(client);
             continue;
         }
         client_execute(client, c);

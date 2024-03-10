@@ -21,49 +21,6 @@
     #include <stdbool.h>
     #include "error_messages.h"
 
-//////////////////////// client ////////////////////////
-
-enum client_state {
-    NOT_LOGGED = 0,
-    LOGGED
-};
-
-enum data_transfer_type {
-    NONE = 0,
-    ACTIVE,
-    PASSIVE
-};
-
-typedef struct subconnection {
-    int data_fd;
-    int port;
-    int new_socket;
-    char buffer[4096];
-} sub_connection_t;
-
-typedef struct client_s {
-    char buffer[1024];
-    int sd;
-    char current_path[1024];
-    int total_bytes;
-    char *username;
-    enum client_state state;
-    enum data_transfer_type transfer_type;
-    sub_connection_t *sub_connection;
-    int data_fd;
-} client_t;
-
-
-typedef void (*handler_t)(client_t *client, char **command);
-
-void client_read(client_t *client);
-void client_send(client_t *client, errormsg msg);
-handler_t client_find(char **buffer_tab);
-void client_watch_subconnection(client_t *client);
-void client_close_sub_connection(client_t *client, errormsg message);
-void sub_connection_execute(client_t *client,
-    char **command, handler_t data_handler);
-
 //////////////////////// utils ////////////////////////
 
 typedef struct addrinfo {
@@ -77,11 +34,62 @@ typedef struct addrinfo {
 addrinfo_t *create_sock_addr(void);
 void bind_sock_addr(int server_fd, int port);
 char **buffer_split(char *buffer);
+char **buffer_split_sep(char *buffer, char *sep);
+int tablen(char **tab);
 
 
     #define SHOW_IP(ADDR) inet_ntoa(ADDR->addr.sin_addr)
     #define SHOW_PORT(ADDR) ntohs(ADDR->addr.sin_port)
     #define MAX_CLIENTS 30
+
+//////////////////////// client ////////////////////////
+
+enum client_state {
+    NOT_LOGGED = 0,
+    LOGGED
+};
+
+enum data_transfer_type {
+    NONE = 0,
+    ACTIVE,
+    PASSIVE
+};
+
+enum data_transfer_status {
+    NOT_STARTED = 0,
+    TRANSFERING,
+    TRANSFERED
+};
+
+typedef struct subconnection {
+    int data_fd;
+    int new_socket;
+    struct sockaddr_in addr_data;
+    char buffer[4096];
+} sub_connection_t;
+
+typedef struct client_s {
+    char buffer[1024];
+    int sd;
+    char current_path[1024];
+    int total_bytes;
+    char *username;
+    enum client_state state;
+    enum data_transfer_type transfer_type;
+    sub_connection_t *sub_connection;
+    enum data_transfer_status transfer_status;
+} client_t;
+
+
+typedef void (*handler_t)(client_t *client, char **command);
+
+void client_read(client_t *client);
+void client_send(client_t *client, errormsg msg);
+handler_t client_find(char **buffer_tab);
+void client_watch_subconnection(client_t *client);
+void client_close_sub_connection(client_t *client, errormsg message);
+void sub_connection_execute(client_t *client,
+    char **command, handler_t data_handler);
 
 
 //////////////////////// server ////////////////////////

@@ -58,7 +58,7 @@ __attribute__((unused)) static handler_t command_funcs[] = {
     command_retr,
     command_dele,
     command_stor,
-    // command_port,
+    command_port,
     NULL
 };
 

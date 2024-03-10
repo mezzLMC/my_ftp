@@ -87,9 +87,6 @@ void command_stor(client_t *client, char **command)
 
 void command_dele(client_t *client, char **command)
 {
-    char *root = server_get_root(NULL);
-    char buffer[1024] = {0};
-
     if (command[1] == NULL || strcmp(command[1], "") == 0) {
         client_close_sub_connection(client, NULL);
         return client_send(client, "501 No file name specified.");
@@ -99,5 +96,5 @@ void command_dele(client_t *client, char **command)
         client_close_sub_connection(client, NULL);
         return client_send(client, "550 File not found or access denied.");
     }
-    sub_connection_execute(client, command, execute_dele);
+    execute_dele(client, command);
 }

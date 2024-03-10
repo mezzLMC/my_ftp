@@ -13,7 +13,6 @@ static void create_passive_socket(client_t *client, int newPort)
     sub_connection_t *sub_connection = malloc(sizeof(sub_connection_t));
 
     memset(sub_connection, 0, sizeof(sub_connection_t));
-    sub_connection->port = newPort;
     sub_connection->data_fd = server_create(newPort);
     sub_connection->new_socket = -1;
     client->sub_connection = sub_connection;
