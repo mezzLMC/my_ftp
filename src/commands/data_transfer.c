@@ -33,7 +33,8 @@ static void execute_stor(client_t *client, char **command)
             break;
         write(fd, buffer, n);
     }
-    dprintf(1, "ouais c bon\n");
+    client_send(client, _226);
+    close(fd);
 }
 
 static void execute_dele(client_t *client, char **command)

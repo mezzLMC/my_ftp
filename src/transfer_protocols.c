@@ -9,15 +9,6 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-
-static void sub_connection_fill_buffer(int fd, sub_connection_t *sub_co)
-{
-    int n = 0;
-
-    n = read(fd, sub_co->buffer, 4096);
-    sub_co->buffer[n - 1] = '\0';
-}
-
 void client_close_sub_connection(client_t *client, errormsg message)
 {
     sub_connection_t *sub_co = client->sub_connection;
@@ -32,6 +23,8 @@ void client_close_sub_connection(client_t *client, errormsg message)
     free(sub_co);
     if (message)
         client_send(client, message);
+    client->transfer_type = NONE;
+    client->transfer_status = NOT_STARTED;
 }
 
 static void sub_connections_flush_buffer(client_t *client)
@@ -39,16 +32,14 @@ static void sub_connections_flush_buffer(client_t *client)
     sub_connection_t *sub_co = client->sub_connection;
 
     if (sub_co && sub_co->new_socket > 0 && sub_co->buffer[0] != '\0') {
-        dprintf(sub_co->new_socket, "%s\r\n", sub_co->buffer);
+        dprintf(sub_co->new_socket, "%s", sub_co->buffer);
         client_send(client, _226);
     }
-    client->transfer_type = NONE;
 }
 
 static void child_transfer_data(int fd[2], handler_t handler,
     client_t *client, char **command)
 {
-    close(client->sub_connection->new_socket);
     dup2(fd[1], 1);
     close(fd[0]);
     handler(client, command);
@@ -62,11 +53,10 @@ static void parent_receive_transfer(int fd[2], pid_t pid, client_t *client)
 
     waitpid(pid, &status, 0);
     close(fd[1]);
-    sub_connection_fill_buffer(fd[0], sub_co);
+    read(fd[0], sub_co->buffer, 4096);
     close(fd[0]);
     sub_connections_flush_buffer(client);
     close(sub_co->new_socket);
-    client->transfer_status = TRANSFERED;
     exit(0);
 }
 
