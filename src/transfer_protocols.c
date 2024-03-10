@@ -104,6 +104,6 @@ void sub_connection_execute(client_t *client, char **command,
     pid = fork();
     if (pid == 0)
         handle_sub_process(data_handler, client, command);
-    else if (client->transfer_type == PASSIVE && sub_co->new_socket > 0)
+    else if (sub_co->new_socket > 0)
         close(sub_co->new_socket);
 }
